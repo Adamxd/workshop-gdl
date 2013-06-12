@@ -9,7 +9,7 @@
 
     <groupId>com.recluit.workshop.communication.adapter</groupId>
     <artifactId>communication-adapter</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>communication-adapter</name>
     <url>http://maven.apache.org</url>
@@ -17,7 +17,53 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
+	
+	  <repositories>
+  	<repository>
+  		<id>maven2-repository.dev.java.net</id>
+  		<name>Java.net Repository for maven</name>
+  		<url>http://download.java.net/maven/2</url>
+  		<layout>default</layout>
+  	</repository>
+  	<repository>
+  		<id>maven-repository.dev.java.net</id>
+  		<name>Java.net maven 1 Repository</name>
+  		<url>http://download.java.net/maven/1</url>
+  		<layout>legacy</layout>
+  	</repository>
+  </repositories>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>com.sun.jersey</groupId>
+  		<artifactId>jersey-server</artifactId>
+  		<version>1.4</version>
+  	</dependency>
+  	
+  	  <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.mockito</groupId>
+        	<artifactId>mockito-all</artifactId>
+        	<version>1.9.5</version>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.13</version>
+        </dependency>
+  </dependencies>
+	
     <build>
         <plugins>
             <plugin>
@@ -49,6 +95,22 @@
               <configuration>
                 <mainClass>com.recluit.workshop.communication.adapter.CommunicationAdapterLauncher</mainClass>
               </configuration>
+            </plugin>
+            
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.4.2</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
