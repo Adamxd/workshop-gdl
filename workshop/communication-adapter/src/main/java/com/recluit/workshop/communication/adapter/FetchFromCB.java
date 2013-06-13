@@ -10,18 +10,19 @@ import java.io.*;
 import java.net.Socket;
 
 
-@Path("/hello")
+@Path("/searchrfc")
 public class FetchFromCB {
 	
-	BufferedReader reader;
-	String result="";
-	boolean done = false;
+	private BufferedReader reader;
+	private String result="";
+	private boolean done = false;
 	
 	@GET
 	@Path("/{rfc}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public String establishConnection(@PathParam("rfc") String rfc){
 		try{
+			done = false;
 			Socket s = new Socket("127.0.0.1",3550);
 			InputStreamReader stream = new InputStreamReader(s.getInputStream());
 			reader = new BufferedReader(stream);
@@ -29,9 +30,14 @@ public class FetchFromCB {
 			t.start();
 			OutputStream out = s.getOutputStream();
 			//out.write('\n');
+			rfc="f"+rfc;
 			out.write(rfc.getBytes());
 			out.flush();
+			while(!done){
+				System.out.println("waiting...");
+			}
 			System.out.println("about send result: "+result);
+			s.close();
 			return result;
 			
 		}
@@ -49,7 +55,11 @@ public class FetchFromCB {
 			try {
 					while((line = reader.readLine())!= null){
 					System.out.println("incoming message : " + line);
-					result = result + line;
+					if(line.equals("EOT")){
+						done=true;
+						return;
+					}
+					result = result + line +"\n";
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

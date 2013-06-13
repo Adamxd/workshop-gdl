@@ -36,15 +36,91 @@ void searchRFC ( char* rfc, int sock){
 		send(sock,"Not Found\n",10,0);
 	}
 	rfc = NULL;
-	//send(sock,"END OF TRANSMISSION\n",20,0);
+	send(sock,"EOT\n",4,0);
 	return;
 }
 
+
+void getQualification ( char* rfc, int sock){
+	FILE* file;
+	file = fopen("Loans.txt","r");
+	char line[100];
+	char* line_r;
+	char rfcf[11];
+	boolean find = FALSE;
+	char DELIMITER = '|';
+	char *fq; //filequalification
+	int i;
+	int lineSize;
+	int dc;
+	int numberOfLoans = 0;
+	int qualification = 0;
+	while( fgets(line,100,file) != NULL){
+		line_r = line+4;
+		strncpy(rfcf,line_r,10);
+		//printf("rfc file: %s\n",rfcf);
+		if ( strncmp(rfcf,rfc,10) == 0){   // if the rfc received is equal to the rfc on the line read
+			lineSize = strlen(line);
+			dc = 0;
+			for (i=0; i<lineSize; i++){    
+				if (line[i] == DELIMITER){
+					dc++;
+					if (dc == 6){
+						fq = &line[i+1];
+					}
+					if (dc == 7){
+						line[i] = '\0';
+					}
+				}
+			}
+			printf("%s",fq);
+			if(strcmp(fq,"GOOD")==0){
+				printf("\n is gooood\n");
+				qualification += 3;
+			}
+			else if (strcmp(fq,"NORMAL") == 0){
+				qualification += 2;
+			}
+			else {
+				qualification += 1;
+			}
+			numberOfLoans++;
+			find = TRUE;
+		}
+	}
+	fclose(file);
+	if (find == FALSE){
+		send(sock,"Not Found\n",10,0);
+	}
+	else{
+		char q[10];
+		switch(qualification/numberOfLoans){
+			case 1:
+				strcpy(q,"VERY BAD\n");
+				break;
+			case 2:
+				strcpy(q,"NORMAL\n");
+				break;
+			case 3:
+				strcpy(q,"GOOD\n");
+				break;
+		}
+		send(sock,q,strlen(q),0);
+		printf("cal: %d \n",qualification/numberOfLoans);
+	}
+	rfc = NULL;
+	send(sock,"EOT\n",4,0);
+	return;
+}
 void add_loan(char* rfc, int sock){
 	FILE* file;
 	file = fopen("Loans.txt","a+");
 	fprintf(file,"\n%s",rfc);
 	printf("%d",strlen(rfc));
+	char msg[20];
+	strcpy(msg,"Loan Added\n");
+	send(sock,msg,strlen(msg),0);
+	send(sock,"EOT\n",4,0);
 	fclose(file);
 }
 
@@ -115,7 +191,7 @@ void closeLoan(char* credito,int sock){
 						 fsetpos(file, &pos );
 						printf( "Posicion del fichero: %d\n", pos);
 						fprintf(file,"N");
-						send(sock,"LOAN CLOSE\n",11,0);
+						send(sock,"LOAN CLOSED\n",12,0);
 						fflush(file);
 						fclose(file);
 						return;
@@ -128,6 +204,7 @@ void closeLoan(char* credito,int sock){
 	if (find == FALSE){
 		send(sock,"Not Found\n",10,0);
 	}
+	send(sock,"EOT\n",4,0);
 	return;
 }
 void processPetition(char* rfc, int sock){
@@ -140,6 +217,9 @@ void processPetition(char* rfc, int sock){
 			break;
 		case 'c':
 			closeLoan(rfc+1, sock);
+			break;
+		case 'q':
+			getQualification(rfc+1, sock);
 			break;
 		default:
 			send(sock,"Operacion no valida\n",20,0);
