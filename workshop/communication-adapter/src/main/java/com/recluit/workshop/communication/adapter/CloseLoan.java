@@ -7,13 +7,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 
-@Path("/addloan")
-public class AddLoan {
+@Path("/closeloan")
+public class CloseLoan {
 	@GET
 	@Path("/{details}")
 	@Consumes(MediaType.TEXT_PLAIN)
-	public String addLoan(@PathParam("details") String details){
+	public String closeLoan(@PathParam("details") String details){
 		Connect connect = new Connect();
-		return connect.establishConnection("a"+details);
+		return connect.establishConnection("c"+details);
 	}
 }

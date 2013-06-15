@@ -115,7 +115,7 @@ void getQualification ( char* rfc, int sock){
 void add_loan(char* rfc, int sock){
 	FILE* file;
 	file = fopen("Loans.txt","a+");
-	fprintf(file,"\n%s",rfc);
+	fprintf(file,"%s\n",rfc);
 	printf("%d",strlen(rfc));
 	char msg[20];
 	strcpy(msg,"Loan Added\n");
@@ -194,6 +194,7 @@ void closeLoan(char* credito,int sock){
 						send(sock,"LOAN CLOSED\n",12,0);
 						fflush(file);
 						fclose(file);
+						send(sock,"EOT\n",4,0);
 						return;
 					}
 			}
