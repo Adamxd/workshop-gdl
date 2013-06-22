@@ -6,7 +6,23 @@
   <constant name="struts.enable.DynamicMethodInvocation" value="false"/>
   <constant name="struts.devMode" value="true"/>
   
-  <include file="creditmanager.xml"/>
+ <!-- <include file="creditmanager.xml"/>  -->
   
   <!-- Add addition packages and configuration here. -->
+		<package name="com.recluit.workshop.creditmanager" extends="struts-default">
+		
+		<action name="index">
+				<result>/index.jsp</result>
+			</action>
+ 	 <action name="ProcessRequest" class="com.recluit.workshop.creditmanager.ProcessRequest">
+		<result name="success">display.jsp</result>
+		<result name="rfcNotFound">NotFound.jsp</result>
+		<result name="newLoan">NewLoan.jsp</result>
+		<result name="NoElegible">NoAproved.jsp</result>
+	</action>	
+	<action name="CreateLoan" class="com.recluit.workshop.creditmanager.CreateLoan">
+		<result name="input">NewLoan.jsp</result>
+		<result name="index">index.jsp</result>
+	</action>
+	</package>
 </struts>

@@ -9,11 +9,16 @@
 </head>
 <body>
 	<div>
-		<form>
-			<s:textfield name="rfc" label="RFC: "/>
-			
-			<s:submit/>
-		</form>	
+		<s:form action="ProcessRequest">
+			<s:textfield name="rfc" label="RFC" maxlength="10" requiredLabel="true"/>
+			<s:select label="Operation"
+       			name="option"
+       			list="#{'01':'Display', '02':'Get New Loan', '03':'Payment', '04':'Close Loan'}"
+       			value="selectedMonth"
+      			 required="true"
+			/>
+			<s:submit value="Query"/>
+		</s:form>	
 	</div>
 </body>
 </html>
